@@ -96,29 +96,6 @@ function drawLetterA() {
   geometry.vertices.push(new THREE.Vector3( 0.25, -0.1, -0.10 )); //24
   geometry.vertices.push(new THREE.Vector3( -0.32, -0.3, -0.10 )); //25
 
-
-  // geometry.vertices.push(new THREE.Vector3( -0.4, -0.95, 0.0 ));
-
-  // geometry.vertices.push(new THREE.Vector3( -0.2, 0, 0.0 ));
-  // geometry.vertices.push(new THREE.Vector3( 0.2, 0, 0.0 ));
-
-  // geometry.vertices.push(new THREE.Vector3( 0.4, -0.95, 0.0 ));
-  // geometry.vertices.push(new THREE.Vector3( 0.95, -0.95, 0.0 ));
-
-  // geometry.vertices.push(new THREE.Vector3( 0.4, 0.95, 0.0 ));
-  // geometry.vertices.push(new THREE.Vector3( -0.4, 0.95, 0.0 ));
-
-  // geometry.vertices.push(new THREE.Vector3( -0.95, -0.95, 0.0 ));
-
-  // var complementGeometry = new THREE.Geometry();
-
-  // complementGeometry.vertices.push(new THREE.Vector3( -0.2, 0.2, 0.0 ));
-  // complementGeometry.vertices.push(new THREE.Vector3( 0.2, 0.2, 0.0 ));
-  // complementGeometry.vertices.push(new THREE.Vector3( 0, 0.8, 0.0 ));
-  // complementGeometry.vertices.push(new THREE.Vector3( -0.2, 0.2, 0.0 ));
-
-
-
    //Front
    geometry.faces.push(new THREE.Face3(1, 0, 2));
    geometry.faces.push(new THREE.Face3(1, 2, 3));
