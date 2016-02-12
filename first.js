@@ -65,30 +65,101 @@ function clearScene() {
 
 function drawLetterA() {
   clearScene();
+
   var geometry = new THREE.Geometry();
-  geometry.vertices.push(new THREE.Vector3( -0.95, -0.95, 0.0 ));
-  geometry.vertices.push(new THREE.Vector3( -0.4, -0.95, 0.0 ));
 
-  geometry.vertices.push(new THREE.Vector3( -0.2, 0, 0.0 ));
-  geometry.vertices.push(new THREE.Vector3( 0.2, 0, 0.0 ));
+  geometry.vertices.push(new THREE.Vector3( -0.8, -0.8, 0.10 )); //0
+  geometry.vertices.push(new THREE.Vector3( -0.5, -0.8, 0.10 )); //1
+  geometry.vertices.push(new THREE.Vector3( -0.3, 0.6, 0.10 )); //2
+  geometry.vertices.push(new THREE.Vector3( 0, 0.6, 0.10 )); //3
+  geometry.vertices.push(new THREE.Vector3( -0.2, 0.8, 0.10 )); //4
+  geometry.vertices.push(new THREE.Vector3( 0.2, 0.8, 0.10 )); //5
+  geometry.vertices.push(new THREE.Vector3( 0.3, 0.6, 0.10 )); //6
+  geometry.vertices.push(new THREE.Vector3( 0.8, -0.8, 0.10 )); //7
+  geometry.vertices.push(new THREE.Vector3( 0.5, -0.8, 0.10 )); //8
+  geometry.vertices.push(new THREE.Vector3( 0.32, -0.3, 0.10 )); //9
+  geometry.vertices.push(new THREE.Vector3( -0.25, -0.1, 0.10 )); //10
+  geometry.vertices.push(new THREE.Vector3( 0.25, -0.1, 0.10 )); //11
+  geometry.vertices.push(new THREE.Vector3( -0.32, -0.3, 0.10 )); //12
 
-  geometry.vertices.push(new THREE.Vector3( 0.4, -0.95, 0.0 ));
-  geometry.vertices.push(new THREE.Vector3( 0.95, -0.95, 0.0 ));
+  geometry.vertices.push(new THREE.Vector3( -0.8, -0.8, -0.10 )); //13
+  geometry.vertices.push(new THREE.Vector3( -0.5, -0.8, -0.10 )); //14
+  geometry.vertices.push(new THREE.Vector3( -0.3, 0.6, -0.10 )); //15
+  geometry.vertices.push(new THREE.Vector3( 0, 0.6, -0.10 )); //16
+  geometry.vertices.push(new THREE.Vector3( -0.2, 0.8, -0.10 )); //17
+  geometry.vertices.push(new THREE.Vector3( 0.2, 0.8, -0.10 )); //18
+  geometry.vertices.push(new THREE.Vector3( 0.3, 0.6, -0.10 )); //19
+  geometry.vertices.push(new THREE.Vector3( 0.8, -0.8, -0.10 )); //20
+  geometry.vertices.push(new THREE.Vector3( 0.5, -0.8, -0.10 )); //21
+  geometry.vertices.push(new THREE.Vector3( 0.32, -0.3, -0.10 )); //22
+  geometry.vertices.push(new THREE.Vector3( -0.25, -0.1, -0.10 )); //23
+  geometry.vertices.push(new THREE.Vector3( 0.25, -0.1, -0.10 )); //24
+  geometry.vertices.push(new THREE.Vector3( -0.32, -0.3, -0.10 )); //25
 
-  geometry.vertices.push(new THREE.Vector3( 0.4, 0.95, 0.0 ));
-  geometry.vertices.push(new THREE.Vector3( -0.4, 0.95, 0.0 ));
 
-  geometry.vertices.push(new THREE.Vector3( -0.95, -0.95, 0.0 ));
+  // geometry.vertices.push(new THREE.Vector3( -0.4, -0.95, 0.0 ));
 
-  var complementGeometry = new THREE.Geometry();
+  // geometry.vertices.push(new THREE.Vector3( -0.2, 0, 0.0 ));
+  // geometry.vertices.push(new THREE.Vector3( 0.2, 0, 0.0 ));
 
-  complementGeometry.vertices.push(new THREE.Vector3( -0.2, 0.2, 0.0 ));
-  complementGeometry.vertices.push(new THREE.Vector3( 0.2, 0.2, 0.0 ));
-  complementGeometry.vertices.push(new THREE.Vector3( 0, 0.8, 0.0 ));
-  complementGeometry.vertices.push(new THREE.Vector3( -0.2, 0.2, 0.0 ));
+  // geometry.vertices.push(new THREE.Vector3( 0.4, -0.95, 0.0 ));
+  // geometry.vertices.push(new THREE.Vector3( 0.95, -0.95, 0.0 ));
 
-  addGeometry(geometry);
-  addGeometry(complementGeometry);
+  // geometry.vertices.push(new THREE.Vector3( 0.4, 0.95, 0.0 ));
+  // geometry.vertices.push(new THREE.Vector3( -0.4, 0.95, 0.0 ));
+
+  // geometry.vertices.push(new THREE.Vector3( -0.95, -0.95, 0.0 ));
+
+  // var complementGeometry = new THREE.Geometry();
+
+  // complementGeometry.vertices.push(new THREE.Vector3( -0.2, 0.2, 0.0 ));
+  // complementGeometry.vertices.push(new THREE.Vector3( 0.2, 0.2, 0.0 ));
+  // complementGeometry.vertices.push(new THREE.Vector3( 0, 0.8, 0.0 ));
+  // complementGeometry.vertices.push(new THREE.Vector3( -0.2, 0.2, 0.0 ));
+
+
+
+   //Front
+   geometry.faces.push(new THREE.Face3(1, 0, 2));
+   geometry.faces.push(new THREE.Face3(1, 2, 3));
+   geometry.faces.push(new THREE.Face3(2, 4, 6));
+   geometry.faces.push(new THREE.Face3(4, 5, 6));
+   geometry.faces.push(new THREE.Face3(6, 7, 8));
+   geometry.faces.push(new THREE.Face3(3, 6, 8));
+   geometry.faces.push(new THREE.Face3(9, 10, 11));
+   geometry.faces.push(new THREE.Face3(9, 10, 12));
+
+   //back
+   geometry.faces.push(new THREE.Face3(13, 14, 15));
+   geometry.faces.push(new THREE.Face3(14, 15, 16));
+   geometry.faces.push(new THREE.Face3(15, 17, 18));
+   geometry.faces.push(new THREE.Face3(17, 18, 19));
+   geometry.faces.push(new THREE.Face3(19, 20, 21));
+   geometry.faces.push(new THREE.Face3(16, 19, 21));
+   geometry.faces.push(new THREE.Face3(22, 23, 24));
+   geometry.faces.push(new THREE.Face3(22, 23, 25));
+
+
+
+   //Adding Element
+   var triangleMaterial = new THREE.MeshBasicMaterial({ 
+  color:0x000000, 
+  vertexColors:THREE.VertexColors,
+  side:THREE.DoubleSide,
+  wireframe:true
+  }); 
+
+  var triangleMesh = new THREE.Mesh(geometry,triangleMaterial); 
+
+  triangleMesh.rotation.x = 0.3;
+  triangleMesh.rotation.y = 0.3;
+  scene.add( triangleMesh );
+          
+  document.getElementById("WebGL-output").appendChild(renderer.domElement);
+        renderer.clear();
+  renderer.render(scene, camera);
+   // addGeometry(geometry);
+  // addGeometry(complementGeometry);
 
  }
 
