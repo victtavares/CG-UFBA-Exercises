@@ -338,99 +338,157 @@ function drawLetterI()  {
 
 
 function drawLetterO() {
-    clearScene();
+  clearScene();
 
-     var geometry = new THREE.Geometry();
+  var geometry = new THREE.Geometry();
+
+  var numVertices = 60;
+  var outsideRadius = 0.8;
+  var insideRadius = 0.6;
+  //Vertice
+  // 0 ---- 60 -- front outside
+  //61 ----- 121 --- front inside
+  // 122 --- 183 --- back outside
+  // 184 --- 245 --- back inside
+
+  // front -- vertices
+  //out circle
+  for (i = 0 ; i < 2*Math.PI ; i+= (2*Math.PI)/numVertices) {
+    var x1 = outsideRadius * Math.cos(i);
+    var y1 = outsideRadius * Math.sin(i);
+
+    geometry.vertices.push(new THREE.Vector3( x1, y1, 0.10)); 
+  }
+  //in circle
+  for (i = 0 ; i < 2*Math.PI ; i+= (2*Math.PI)/numVertices) {
+    var x2 = insideRadius * Math.cos(i);
+    var y2 = insideRadius * Math.sin(i);
+
+    geometry.vertices.push(new THREE.Vector3( x2, y2, 0.10)); 
+  }
+
+  //back -- vertices
+  //out circle
+  for (i = 0 ; i < 2*Math.PI ; i+= (2*Math.PI)/numVertices) {
+    var x3 = outsideRadius * Math.cos(i);
+    var y3 = outsideRadius * Math.sin(i);
+
+    geometry.vertices.push(new THREE.Vector3( x3, y3, -0.10)); 
+  }
+
+  //in circle
+  for (i = 0 ; i < 2*Math.PI ; i+= (2*Math.PI)/numVertices) {
+    var x4 = insideRadius * Math.cos(i);
+    var y4 = insideRadius * Math.sin(i);
+
+    geometry.vertices.push(new THREE.Vector3( x4, y4, -0.10)); 
+  }
+
+  //Front -- faces
+  //numVertices +1 is the beggining of the circle
+  for (i = 0, inside = numVertices +1; i < numVertices ; i++, inside++) {
+    //making the circle connecting the inside with the outside.
+    geometry.faces.push(new THREE.Face3(inside, i, i+1));
+
+    //completing the empty space to close the circle
+    geometry.faces.push(new THREE.Face3(inside, i+1, inside+1));
+  }
+
+  //Back -- faces
+  // i = 122, inside = 183, i < 182
+  for (i = numVertices*2 + 2, inside = numVertices*3 +3; i < numVertices*3 +2; i++, inside++) {
+    geometry.faces.push(new THREE.Face3(inside, i, i+1));
+    geometry.faces.push(new THREE.Face3(inside, i+1, inside+1));
+  }
 
 
-    //Adding Element
+  //Connection - Outside
+  for (i = 0, inside = numVertices*2 +2; i < numVertices; i++, inside++) {
+    geometry.faces.push(new THREE.Face3(inside+1, i, i+1));
+    geometry.faces.push(new THREE.Face3(inside, i, inside+1));
+  }
+
+  //Connection - Inside
+  for (i = numVertices+1, inside = numVertices*3 +3; i < numVertices*2+1; i++, inside++) {
+    geometry.faces.push(new THREE.Face3(inside+1, i, i+1));
+    geometry.faces.push(new THREE.Face3(inside, i, inside+1));
+  }
+
+  //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
   color:0x8585ad, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
   }); 
-  console.log(geometry);
-  currentShape = new THREE.Mesh(geometry,triangleMaterial);
 
+
+  currentShape = new THREE.Mesh(geometry,triangleMaterial);
   rotateShapeOnAxis(20,20,currentShape);
 
-  addShape(currentShape);
-
-
-    // var geometry = new THREE.RingGeometry( 0.98, 0.78, 32, 30);
-    // var material = new THREE.MeshBasicMaterial( { color: 0x8585ad, side: THREE.DoubleSide } );
-    // var mesh = new THREE.Mesh( geometry, material );
-    // scene.add( mesh );
-
-    // document.getElementById("WebGL-output").appendChild(renderer.domElement);
-
-    // renderer.clear();
-    // renderer.render(scene, camera); 
-
-    // addGeometry(geometry);    
+  addShape(currentShape);  
 }
 
 
   function drawLetterU() {
     clearScene();
 
-    var geometry = new THREE.Geometry();
+    // var geometry = new THREE.Geometry();
 
 
-      // var curve = new THREE.SplineCurve3([
-      //   new THREE.Vector3( -0.3, 0, 0 ), 
-      //   new THREE.Vector3( -0.2, -0.4, 0 ),
-      //   new THREE.Vector3( 0, -0.5, 0 ), //  
-      //   new THREE.Vector3( 0.2, -0.4, 0 ),
-      //   new THREE.Vector3( 0.3, 0, 0 ),  
-      //  ]);
+    //   // var curve = new THREE.SplineCurve3([
+    //   //   new THREE.Vector3( -0.3, 0, 0 ), 
+    //   //   new THREE.Vector3( -0.2, -0.4, 0 ),
+    //   //   new THREE.Vector3( 0, -0.5, 0 ), //  
+    //   //   new THREE.Vector3( 0.2, -0.4, 0 ),
+    //   //   new THREE.Vector3( 0.3, 0, 0 ),  
+    //   //  ]);
 
-          var curve = new THREE.SplineCurve3([
-        new THREE.Vector3( -0.3, 0.5, 0 ), 
-        new THREE.Vector3( -0.2, 0.1, 0 ),
-        new THREE.Vector3( 0, 0, 0 ), //  
-        new THREE.Vector3( 0.2, 0.1, 0 ),
-        new THREE.Vector3( 0.3, 0.5, 0 ),  
-       ]);
-
-
-
-    geometry.vertices = curve.getPoints(50);
-
-    geometry.vertices.push(new THREE.Vector3( 0.3, 0.99, 0.0 ));// 5
-    geometry.vertices.push(new THREE.Vector3( 0.45, 0.99, 0.0 ));//6
+    //       var curve = new THREE.SplineCurve3([
+    //     new THREE.Vector3( -0.3, 0.5, 0 ), 
+    //     new THREE.Vector3( -0.2, 0.1, 0 ),
+    //     new THREE.Vector3( 0, 0, 0 ), //  
+    //     new THREE.Vector3( 0.2, 0.1, 0 ),
+    //     new THREE.Vector3( 0.3, 0.5, 0 ),  
+    //    ]);
 
 
-    // geometry.vertices.push(new THREE.Vector3( 0.5, 0.99, 0.0 ));// 5
-    // geometry.vertices.push(new THREE.Vector3( 0.65, 0.99, 0.0 ));//6
+
+    // geometry.vertices = curve.getPoints(50);
+
+    // geometry.vertices.push(new THREE.Vector3( 0.3, 0.99, 0.0 ));// 5
+    // geometry.vertices.push(new THREE.Vector3( 0.45, 0.99, 0.0 ));//6
 
 
-    var curve2 = new THREE.SplineCurve3([
-      new THREE.Vector3( 0.45, 0.5, 0 ), 
-      new THREE.Vector3( 0.35, 0.05, 0 ),
-      new THREE.Vector3( 0, -0.2, 0 ),
-      new THREE.Vector3( -0.35, 0.0, 0 ),
-      new THREE.Vector3( -0.45, 0.5, 0 ),    
-    ]);
-
-    geometry.vertices.push.apply(geometry.vertices, curve2.getPoints(50));
+    // // geometry.vertices.push(new THREE.Vector3( 0.5, 0.99, 0.0 ));// 5
+    // // geometry.vertices.push(new THREE.Vector3( 0.65, 0.99, 0.0 ));//6
 
 
-    geometry.vertices.push(new THREE.Vector3( -0.45, 0.99, 0.0 ));
-    geometry.vertices.push(new THREE.Vector3( -0.3, 0.99, 0.0 ));
-    geometry.vertices.push(new THREE.Vector3( -0.3, 0.5, 0 ));// 5
-    //geometry.vertices.push(new THREE.Vector3( -0.7, 0.99, 0.0 ));// 5
-    // geometry.vertices.concat(curve2.getPoints(50));
+    // var curve2 = new THREE.SplineCurve3([
+    //   new THREE.Vector3( 0.45, 0.5, 0 ), 
+    //   new THREE.Vector3( 0.35, 0.05, 0 ),
+    //   new THREE.Vector3( 0, -0.2, 0 ),
+    //   new THREE.Vector3( -0.35, 0.0, 0 ),
+    //   new THREE.Vector3( -0.45, 0.5, 0 ),    
+    // ]);
 
-    console.log(geometry.vertices.length);
-    addGeometry(geometry);
-    // Create the final Object3d to add to the scene
-    // var ellipse = new THREE.Line( geometry, material );
+    // geometry.vertices.push.apply(geometry.vertices, curve2.getPoints(50));
 
-    // scene.add( ellipse );
-    // renderer.clear();
-    // renderer.render(scene, camera); 
+
+    // geometry.vertices.push(new THREE.Vector3( -0.45, 0.99, 0.0 ));
+    // geometry.vertices.push(new THREE.Vector3( -0.3, 0.99, 0.0 ));
+    // geometry.vertices.push(new THREE.Vector3( -0.3, 0.5, 0 ));// 5
+    // //geometry.vertices.push(new THREE.Vector3( -0.7, 0.99, 0.0 ));// 5
+    // // geometry.vertices.concat(curve2.getPoints(50));
+
+    // console.log(geometry.vertices.length);
+    // addGeometry(geometry);
+    // // Create the final Object3d to add to the scene
+    // // var ellipse = new THREE.Line( geometry, material );
+
+    // // scene.add( ellipse );
+    // // renderer.clear();
+    // // renderer.render(scene, camera); 
 
 
 
