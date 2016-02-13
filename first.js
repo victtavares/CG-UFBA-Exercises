@@ -46,7 +46,6 @@ function clearScene() {
   }
 }
 
-//if doesn't want to rotate, put 0 on value.
 function rotateShapeOnAxis(degreesX,degreesY, shape) {
   var rotationX = new THREE.Vector3( 1, 0, 0 ).normalize();
   var rotationY = new THREE.Vector3( 0, 1, 0 ).normalize();
@@ -150,7 +149,7 @@ function drawLetterA() {
 
    //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x8585ad, 
+  color:0x0080ff, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
@@ -263,12 +262,11 @@ function drawLetterE() {
 
    //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x8585ad, 
+  color:0x0080ff, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
   }); 
-  console.log(geometry);
   currentShape = new THREE.Mesh(geometry,triangleMaterial);
 
   rotateShapeOnAxis(20,20,currentShape);
@@ -321,12 +319,11 @@ function drawLetterI()  {
 
    //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x8585ad, 
+  color:0x0080ff, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
   }); 
-  console.log(geometry);
   currentShape = new THREE.Mesh(geometry,triangleMaterial);
 
   rotateShapeOnAxis(20,20,currentShape);
@@ -348,8 +345,8 @@ function drawLetterO() {
   //Vertice
   // 0 ---- 60 -- front outside
   //61 ----- 121 --- front inside
-  // 122 --- 183 --- back outside
-  // 184 --- 245 --- back inside
+  // 122 --- 182 --- back outside
+  // 183 --- 244 --- back inside
 
   // front -- vertices
   //out circle
@@ -416,7 +413,7 @@ function drawLetterO() {
 
   //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x8585ad, 
+  color:0x0080ff, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
@@ -433,65 +430,145 @@ function drawLetterO() {
   function drawLetterU() {
     clearScene();
 
-    // var geometry = new THREE.Geometry();
+  var geometry = new THREE.Geometry();
+
+  var numVertices = 60;
+  var outsideRadius = -0.8;
+  var insideRadius = -0.6;
+  //Vertice
+  // 0 ---- 60 -- front outside
+  //61 ----- 121 --- front inside
+  // 122 --- 182 --- back outside
+  // 183 --- 244 --- back inside
+
+  // front -- vertices
+  //out circle
+  for (i = 0 ; i < Math.PI ; i+= (Math.PI)/numVertices) {
+    var x1 = outsideRadius * Math.cos(i);
+    var y1 = outsideRadius * Math.sin(i);
+    geometry.vertices.push(new THREE.Vector3( x1, y1, 0.10)); 
+  }
+  //in circle
+  for (i = 0 ; i < Math.PI ; i+= (Math.PI)/numVertices) {
+    var x2 = insideRadius * Math.cos(i);
+    var y2 = insideRadius * Math.sin(i);
+    geometry.vertices.push(new THREE.Vector3( x2, y2, 0.10)); 
+  }
+
+  //back -- vertices
+  //out circle
+  for (i = 0 ; i < Math.PI ; i+= (Math.PI)/numVertices) {
+    var x3 = outsideRadius * Math.cos(i);
+    var y3 = outsideRadius * Math.sin(i);
+    geometry.vertices.push(new THREE.Vector3( x3, y3, -0.10)); 
+  }
+
+  //in circle
+  for (i = 0 ; i < Math.PI ; i+= (Math.PI)/numVertices) {
+    var x4 = insideRadius * Math.cos(i);
+    var y4 = insideRadius * Math.sin(i);
+    geometry.vertices.push(new THREE.Vector3( x4, y4, -0.10)); 
+  }
+
+  //Front -- faces
+  for (i = 0, inside = numVertices +1; i < numVertices ; i++, inside++) {
+    geometry.faces.push(new THREE.Face3(inside, i, i+1));
+    geometry.faces.push(new THREE.Face3(inside, i+1, inside+1));
+  }
+
+  //Back -- faces
+  for (i = numVertices*2 + 2, inside = numVertices*3 +3; i < numVertices*3 +2; i++, inside++) {
+    geometry.faces.push(new THREE.Face3(inside, i, i+1));
+    geometry.faces.push(new THREE.Face3(inside, i+1, inside+1));
+  }
+
+  //Connection - Outside
+  for (i = 0, inside = numVertices*2 +2; i < numVertices; i++, inside++) {
+    geometry.faces.push(new THREE.Face3(inside+1, i, i+1));
+    geometry.faces.push(new THREE.Face3(inside, i, inside+1));
+  }
+
+  //Connection - Inside
+  for (i = numVertices+1, inside = numVertices*3 +3; i < numVertices*2+1; i++, inside++) {
+    geometry.faces.push(new THREE.Face3(inside+1, i, i+1));
+    geometry.faces.push(new THREE.Face3(inside, i, inside+1));
+  }
+
+  var total = geometry.vertices.length;
+  geometry.vertices.push(new THREE.Vector3( -0.8, 0.8, 0.10)); // total
+  geometry.vertices.push(new THREE.Vector3( -0.6, 0.8, 0.10)); // total +1
+  geometry.vertices.push(new THREE.Vector3(  0.6, 0.8, 0.10)); // total +2
+  geometry.vertices.push(new THREE.Vector3(  0.8, 0.8, 0.10)); // total +3
+
+  geometry.vertices.push(new THREE.Vector3( -0.8, 0.8, -0.10)); // total +4
+  geometry.vertices.push(new THREE.Vector3( -0.6, 0.8, -0.10)); // total +5
+  geometry.vertices.push(new THREE.Vector3(  0.6, 0.8, -0.10)); // total +6
+  geometry.vertices.push(new THREE.Vector3(  0.8, 0.8, -0.10)); // total +7
+
+   //Vertice
+  // 0 ---- 60 -- front outside
+  //61 ----- 121 --- front inside
+  //122 --- 182 --- back outside
+  //183 --- 243 --- back inside
+
+  //left - front
+  geometry.faces.push(new THREE.Face3(total, 0, numVertices+1));
+  geometry.faces.push(new THREE.Face3(numVertices+1, total, total+1));
 
 
-    //   // var curve = new THREE.SplineCurve3([
-    //   //   new THREE.Vector3( -0.3, 0, 0 ), 
-    //   //   new THREE.Vector3( -0.2, -0.4, 0 ),
-    //   //   new THREE.Vector3( 0, -0.5, 0 ), //  
-    //   //   new THREE.Vector3( 0.2, -0.4, 0 ),
-    //   //   new THREE.Vector3( 0.3, 0, 0 ),  
-    //   //  ]);
-
-    //       var curve = new THREE.SplineCurve3([
-    //     new THREE.Vector3( -0.3, 0.5, 0 ), 
-    //     new THREE.Vector3( -0.2, 0.1, 0 ),
-    //     new THREE.Vector3( 0, 0, 0 ), //  
-    //     new THREE.Vector3( 0.2, 0.1, 0 ),
-    //     new THREE.Vector3( 0.3, 0.5, 0 ),  
-    //    ]);
+  //right- front
+  geometry.faces.push(new THREE.Face3(total+2, numVertices, numVertices*2+1));
+  geometry.faces.push(new THREE.Face3(total+3, total+2, numVertices));
 
 
+  //left- back
+  geometry.faces.push(new THREE.Face3(numVertices*3+3, numVertices*2+2, total+4));
+  geometry.faces.push(new THREE.Face3(numVertices*3+3, total+5, total+4));
 
-    // geometry.vertices = curve.getPoints(50);
-
-    // geometry.vertices.push(new THREE.Vector3( 0.3, 0.99, 0.0 ));// 5
-    // geometry.vertices.push(new THREE.Vector3( 0.45, 0.99, 0.0 ));//6
-
-
-    // // geometry.vertices.push(new THREE.Vector3( 0.5, 0.99, 0.0 ));// 5
-    // // geometry.vertices.push(new THREE.Vector3( 0.65, 0.99, 0.0 ));//6
+  //right- back
+  geometry.faces.push(new THREE.Face3(numVertices*3+2, total+6, total+7));
+  geometry.faces.push(new THREE.Face3(numVertices*4+3, numVertices*3+2, total+6));
 
 
-    // var curve2 = new THREE.SplineCurve3([
-    //   new THREE.Vector3( 0.45, 0.5, 0 ), 
-    //   new THREE.Vector3( 0.35, 0.05, 0 ),
-    //   new THREE.Vector3( 0, -0.2, 0 ),
-    //   new THREE.Vector3( -0.35, 0.0, 0 ),
-    //   new THREE.Vector3( -0.45, 0.5, 0 ),    
-    // ]);
+  //top-right
+  geometry.faces.push(new THREE.Face3(total, total+1, total+4));
+  geometry.faces.push(new THREE.Face3(total+1, total+5, total+4));
 
-    // geometry.vertices.push.apply(geometry.vertices, curve2.getPoints(50));
+  //top-left
+  geometry.faces.push(new THREE.Face3(total+2, total+3, total+6));
+  geometry.faces.push(new THREE.Face3(total+6, total+7, total+3));
 
 
-    // geometry.vertices.push(new THREE.Vector3( -0.45, 0.99, 0.0 ));
-    // geometry.vertices.push(new THREE.Vector3( -0.3, 0.99, 0.0 ));
-    // geometry.vertices.push(new THREE.Vector3( -0.3, 0.5, 0 ));// 5
-    // //geometry.vertices.push(new THREE.Vector3( -0.7, 0.99, 0.0 ));// 5
-    // // geometry.vertices.concat(curve2.getPoints(50));
+  //left-side-outside
+  geometry.faces.push(new THREE.Face3(total, 0, total+4));
+  geometry.faces.push(new THREE.Face3(numVertices*2+2, 0, total+4));
 
-    // console.log(geometry.vertices.length);
-    // addGeometry(geometry);
-    // // Create the final Object3d to add to the scene
-    // // var ellipse = new THREE.Line( geometry, material );
+  //left-side-inside
+  geometry.faces.push(new THREE.Face3(total+1, numVertices+1, total+5));
+  geometry.faces.push(new THREE.Face3(numVertices+1, numVertices*3+3, total+5));
 
-    // // scene.add( ellipse );
-    // // renderer.clear();
-    // // renderer.render(scene, camera); 
+  //right-side-inside
+  geometry.faces.push(new THREE.Face3(numVertices*2+1, numVertices*4+3, total+6));
+  geometry.faces.push(new THREE.Face3(numVertices*2+1, total+2, total+6));
+
+  //right-side-outside
+  geometry.faces.push(new THREE.Face3(numVertices*3+2, total+7, total+3));
+  geometry.faces.push(new THREE.Face3(numVertices, numVertices*3+2, total+3));
 
 
+   //Adding Element
+  var triangleMaterial = new THREE.MeshBasicMaterial({ 
+  color:0x0080ff, 
+  vertexColors:THREE.VertexColors,
+  side:THREE.DoubleSide,
+  wireframe:false
+  }); 
 
+
+  currentShape = new THREE.Mesh(geometry,triangleMaterial);
+  rotateShapeOnAxis(20,20,currentShape);
+
+  addShape(currentShape);  
   }
 
   //Binding letters
