@@ -8,6 +8,10 @@
  var letterI;
  var letterO;
  var letterU;
+ var groupA;
+ var groupE;
+ var groupI;
+ var groupU;
 
 function init() {
 
@@ -16,7 +20,7 @@ function init() {
   renderer = new THREE.WebGLRenderer();
 
   renderer.setClearColor(new THREE.Color(0.8, 0.8, 0.8));
-  renderer.setSize(600, 600);
+  renderer.setSize(700, 600);
   
   camera = new THREE.OrthographicCamera( -1.0, 1.0, 1.0, -1.0, -1.0, 1.0 );
   scene.add( camera );
@@ -60,13 +64,28 @@ function init() {
 
 
   var floor = drawFloor();
+  groupA = new THREE.Object3D();
+  groupA.add(letterA);
 
+  groupE = new THREE.Object3D();
+  groupE.add(letterE);
+
+  groupI = new THREE.Object3D();
+  groupI.add(letterI);
+
+  groupO = new THREE.Object3D();
+  groupO.add(letterO);
+
+  groupU = new THREE.Object3D();
+  groupU.add(letterU);
+
+  groupE.add(letterE);
   groupLetters = new THREE.Object3D();
-  groupLetters.add(letterA);
-  groupLetters.add(letterE);
-  groupLetters.add(letterI);
-  groupLetters.add(letterO);
-  groupLetters.add(letterU);
+  groupLetters.add(groupA);
+  groupLetters.add(groupE);
+  groupLetters.add(groupI);
+  groupLetters.add(groupO);
+  groupLetters.add(groupU);
 
   groupLetters.scale.set(0.8,0.8,0.8);
 
@@ -82,6 +101,9 @@ function init() {
   animatedA();
   animatedE();
   animatedI();
+  animatedO();
+  animatedU();
+  render();
 
 
   document.getElementById("WebGL-output").appendChild(renderer.domElement);
@@ -95,6 +117,10 @@ function init() {
 
 //------------------------------- Animações  ------------------------------- 
 //
+function render() {
+  renderer.render(scene, camera);
+  requestAnimationFrame(render);
+}
 
 function animatedA() {
   var currentAngle = 0;
@@ -147,7 +173,67 @@ function animatedI() {
       // helper = new THREE.AxisHelper( 1 );
       // letterI.add(helper);
       letterI.rotateOnAxis(new THREE.Vector3(1.0, 1.0, 0.0).normalize(), speed);
-      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+     
+    }
+
+    animate();
+}
+
+function animatedO() {
+  var currentPosition = 0;
+  var speedPosition = 0.004;
+  var speedAngle = 0.01;
+  var currentAngle = 0;
+
+
+    function animate() {
+
+      currentPosition += speedPosition;
+      currentAngle += speedAngle;
+
+      //Se o angulo for maior que 45 ou menor que -45, muda de lado
+      if (currentPosition >= 0.1 || currentPosition <= 0) {
+          speedPosition *=-1;
+      }
+
+      if (currentAngle >= Math.PI/12 || currentAngle <= -Math.PI/12) {
+          speedAngle *=-1;
+      }
+
+      
+      letterO.rotateOnAxis(new THREE.Vector3(1.0, 0.0, 0.0).normalize(), speedAngle);
+      letterO.translateY(speedPosition);
+      requestAnimationFrame(animate);
+     
+    }
+
+    animate();
+}
+
+function animatedU() {
+  var currentPosition = 0;
+  var speedPosition = 0.002;
+  var speedAngle = 0.01;
+  currentAngle = 0;
+
+    function animate() {
+
+      currentPosition += speedPosition;
+      currentAngle += speedAngle;
+
+      //Se o angulo for maior que 45 ou menor que -45, muda de lado
+      if (currentPosition >= 0.05 || currentPosition <= -0.05) {
+          speedPosition *=-1;
+      }
+
+      if (currentAngle >= Math.PI/6 || currentAngle <= -Math.PI/6) {
+          speedAngle *=-1;
+      }
+
+
+      letterU.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0).normalize(), speedAngle);
+      letterU.translateZ(speedPosition);
       requestAnimationFrame(animate);
      
     }
@@ -156,6 +242,43 @@ function animatedI() {
 }
 
 
+
+function animateCiranda() {
+    //letter A
+
+    groupLetters.scale.setX(0.6);
+    groupLetters.scale.setY(0.6);
+
+    //Resetando as posições para que possamos realizar a curva por todo o eixo da cena.
+    letterA.position.setX(0);
+    letterE.position.setX(0);
+    letterI.position.setX(0);
+    letterO.position.setX(0);
+    letterU.position.setX(0);
+
+    animateLetterCiranda(groupA,0);
+    animateLetterCiranda(groupE,-Math.PI/7);
+    animateLetterCiranda(groupI,-Math.PI/4);
+    animateLetterCiranda(groupO,-Math.PI/2.8);
+    animateLetterCiranda(groupU,-Math.PI/2);
+
+}
+
+
+function animateLetterCiranda(group,startAngle) {
+  var raio = 0.95;
+  var speed = 0.01;
+  function animate() {
+    startAngle += speed;
+    var x = raio*Math.cos(startAngle);
+    var y = raio*Math.sin(startAngle);
+    group.position.setX(x);
+    group.position.setY(y);
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}
  
 //------------------------------- Aux Functions ------------------------------- 
 
@@ -204,8 +327,8 @@ function drawFloor() {
   });
 
   var currentShape = new THREE.Mesh(geometry,triangleMaterial);
-  rotateShapeOnAxis(30,5,currentShape);
-
+  rotateShapeOnAxis(1,5,currentShape);
+  currentShape.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ).normalize(), Math.PI/2 ); 
   return currentShape;
 }
 
@@ -571,7 +694,7 @@ function drawLetterO() {
 
   //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x0080ff, 
+  color:0x00ff00, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
@@ -716,7 +839,7 @@ function drawLetterO() {
 
    //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x0080ff, 
+  color:0x0000FF, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
@@ -730,10 +853,11 @@ function drawLetterO() {
   }
 
   //Binding letters
-  keyboardJS.bind('a', drawLetterA);
-  keyboardJS.bind('e', drawLetterE);
-  keyboardJS.bind('i', drawLetterI);
-  keyboardJS.bind('o', drawLetterO);
-  keyboardJS.bind('u', drawLetterU);
+  keyboardJS.bind('c', animateCiranda);
+  // keyboardJS.bind('a', drawLetterA);
+  // keyboardJS.bind('e', drawLetterE);
+  // keyboardJS.bind('i', drawLetterI);
+  // keyboardJS.bind('o', drawLetterO);
+  // keyboardJS.bind('u', drawLetterU);
 
 
