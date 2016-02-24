@@ -13,6 +13,10 @@
  var groupI;
  var groupU;
 
+ var shouldStopCiranda = false;
+ var shouldStopTrenzinho = false;
+ var trenzinhoAnimationID;
+
 function init() {
 
    scene = new THREE.Scene();
@@ -20,7 +24,7 @@ function init() {
   renderer = new THREE.WebGLRenderer();
 
   renderer.setClearColor(new THREE.Color(0.8, 0.8, 0.8));
-  renderer.setSize(700, 600);
+  renderer.setSize(800, 800);
   
   camera = new THREE.OrthographicCamera( -1.0, 1.0, 1.0, -1.0, -1.0, 1.0 );
   scene.add( camera );
@@ -32,7 +36,7 @@ function init() {
   letterA = drawLetterA();
   letterA.scale.set(scaleValue,scaleValue,scaleValue);
   letterA.position.setX(-0.7);
-  letterA.position.setY(0.0);
+  letterA.position.setY(0);
   rotateShapeOnAxis(0,-20,letterA);
 
   letterE = drawLetterE();
@@ -93,9 +97,8 @@ function init() {
   groupScene.add(groupLetters);
   groupScene.add(floor);
   scene.add(groupScene);
+  groupScene.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ).normalize(), Math.PI/6 );
 
-  //rotation in 20 degrees
-  groupLetters.rotateOnAxis(new THREE.Vector3(1.0, 1.0, 0.0).normalize(), Math.PI/30);
 
   //-------------------------------- Adicionando as animações ---------------------------------
   animatedA();
@@ -109,11 +112,10 @@ function init() {
   document.getElementById("WebGL-output").appendChild(renderer.domElement);
   renderer.clear();
   renderer.render(scene, camera);
-
-
-
-
 }
+
+
+
 
 //------------------------------- Animações  ------------------------------- 
 //
@@ -260,24 +262,125 @@ function animateCiranda() {
     animateLetterCiranda(groupE,-Math.PI/7);
     animateLetterCiranda(groupI,-Math.PI/4);
     animateLetterCiranda(groupO,-Math.PI/2.8);
-    animateLetterCiranda(groupU,-Math.PI/2);
+    animateLetterCiranda(groupU,-Math.PI/1.8);
 
 }
 
 
 function animateLetterCiranda(group,startAngle) {
-  var raio = 0.95;
+  shouldStopCiranda = false;
+  var raio = 0.77;
   var speed = 0.01;
   function animate() {
+
+    if (shouldStopCiranda) {
+      return;
+    }
+
     startAngle += speed;
     var x = raio*Math.cos(startAngle);
-    var y = raio*Math.sin(startAngle);
+    var z = raio*Math.sin(startAngle);
     group.position.setX(x);
-    group.position.setY(y);
+    group.position.setZ(z);
     requestAnimationFrame(animate);
   }
 
   animate();
+}
+
+
+function animateTrenzinho() {
+  shouldStopCiranda = true;
+  
+  groupLetters.scale.setX(0.6);
+  groupLetters.scale.setY(0.6);
+
+  //Resetando as posições para que possamos realizar a curva por todo o eixo da cena.
+  letterA.position.setX(0);
+  letterE.position.setX(0);
+  letterI.position.setX(0);
+  letterO.position.setX(0);
+  letterU.position.setX(0);
+
+
+  var initialAposX = 0.9;
+
+  groupA.position.setX(initialAposX);
+  groupA.position.setZ(initialAposX);
+
+  groupE.position.setX(initialAposX -0.4);
+  groupE.position.setZ(initialAposX);
+
+  groupI.position.setX(initialAposX -0.7);
+  groupI.position.setZ(initialAposX);
+
+  groupO.position.setX(initialAposX -1.0);
+  groupO.position.setZ(initialAposX);
+
+  groupU.position.setX(initialAposX -1.4);
+  groupU.position.setZ(initialAposX);
+  //var caminho = [{value:0.9, sentido:'x'}];
+
+  walkSquare(groupA);
+  walkSquare(groupE);
+  walkSquare(groupI);
+  walkSquare(groupO);
+  walkSquare(groupU);
+}
+
+
+function round(number) {
+  return Math.round(number * 10)/10;
+}
+
+function walkSquare(group) {
+    var limitSquare = 0.9;
+    var sentido = 'x';
+    var speed = 0.01;
+
+
+    function animate() {
+      //Verifica se chegou no ponto inferior direito, caso seja verdade, subir pelo ponto Z
+      if (group.position.x >= limitSquare && round(group.position.z) >= limitSquare && sentido == "x") {
+        console.log("go down");
+        speed *= -1;
+         sentido = "z";
+      }
+
+      //Verifica se chegou no ponto superior, direito, caso seja verdade, ir para esquerda pelo ponto X
+      if (group.position.x >= limitSquare && group.position.z <= -limitSquare && sentido == "z") {
+        console.log("should go left");
+        sentido = "x";
+      }
+
+      //Verifica se chegou no ponto superior esquerdo, caso seja verdade, ir para baixo pelo ponto Z
+       if (group.position.x <= -limitSquare && round(group.position.z) <= -limitSquare && sentido == "x") {
+        console.log("should go down");
+        speed *= -1;
+        sentido = "z";
+      }
+
+      //Verifica se chegou no ponto inferior esquerdo, caso seja verdade, ir para direita pelo ponto X
+      if (round(group.position.x) <= -limitSquare && group.position.z >= limitSquare && sentido == "z") {
+        console.log("should go right");
+        sentido = "x";
+      }
+
+      if (sentido == 'x') {
+        group.translateX(speed);
+      }
+
+      if (sentido == 'z') {
+        group.translateZ(speed);
+      }
+
+      requestAnimationFrame(animate);
+
+    }
+
+    animate();
+
+
 }
  
 //------------------------------- Aux Functions ------------------------------- 
@@ -307,17 +410,32 @@ function rotateShapeOnAxis(degreesX,degreesY, shape) {
 
 function drawFloor() {
   var floorY = -0.2;
+  var alturaFloor = 0.02;
   var vertice = 0.9;
   var geometry = new THREE.Geometry();
 
+  //linha cima - frente
   geometry.vertices.push(new THREE.Vector3( -vertice, floorY, vertice )); //0
   geometry.vertices.push(new THREE.Vector3( vertice, floorY, vertice )); //1
+
+  //linha cima - fundo
   geometry.vertices.push(new THREE.Vector3( -vertice, floorY, -vertice )); //2
   geometry.vertices.push(new THREE.Vector3( vertice, floorY, -vertice )); //3
 
+  //linha baixo - frente
+  geometry.vertices.push(new THREE.Vector3( -vertice, floorY-alturaFloor, vertice )); //4
+  geometry.vertices.push(new THREE.Vector3( vertice, floorY-alturaFloor, vertice )); //5
+
+
+  //linha baixo - fundo
+  geometry.vertices.push(new THREE.Vector3( -vertice, floorY-alturaFloor, -vertice )); //6
+  geometry.vertices.push(new THREE.Vector3( vertice, floorY-alturaFloor, -vertice )); //7
 
   geometry.faces.push(new THREE.Face3(0, 2, 1)); //0
   geometry.faces.push(new THREE.Face3(3, 1, 2)); //1
+
+  geometry.faces.push(new THREE.Face3(4, 6, 5)); //2
+  geometry.faces.push(new THREE.Face3(7, 5, 6)); //3
 
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
   color:0xaa7070, 
@@ -327,13 +445,13 @@ function drawFloor() {
   });
 
   var currentShape = new THREE.Mesh(geometry,triangleMaterial);
-  rotateShapeOnAxis(1,5,currentShape);
-  currentShape.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ).normalize(), Math.PI/2 ); 
+  rotateShapeOnAxis(1,1,currentShape);
+  //currentShape.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ).normalize(), Math.PI/2 ); 
   return currentShape;
 }
 
+
 function drawLetterA() {
-  //clearScene();
 
   var geometry = new THREE.Geometry();
 
@@ -447,7 +565,6 @@ function drawLetterA() {
 
 
 function drawLetterE() {
-  //clearScene();
 
   var geometry = new THREE.Geometry();
   
@@ -557,7 +674,6 @@ function drawLetterE() {
 
 
 function drawLetterI()  {
-  clearScene();
 
   var geometry = new THREE.Geometry();
 
@@ -616,7 +732,6 @@ function drawLetterI()  {
 
 
 function drawLetterO() {
-  clearScene();
 
   var geometry = new THREE.Geometry();
 
@@ -709,7 +824,6 @@ function drawLetterO() {
 
 
   function drawLetterU() {
-    clearScene();
 
   var geometry = new THREE.Geometry();
 
@@ -854,6 +968,7 @@ function drawLetterO() {
 
   //Binding letters
   keyboardJS.bind('c', animateCiranda);
+  keyboardJS.bind('t', animateTrenzinho);
   // keyboardJS.bind('a', drawLetterA);
   // keyboardJS.bind('e', drawLetterE);
   // keyboardJS.bind('i', drawLetterI);
