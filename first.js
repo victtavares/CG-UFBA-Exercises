@@ -1,8 +1,13 @@
  var scene;
  var renderer;
  var camera;
- var currentShape;
-
+ var groupScene;
+ var groupLetters;
+ var letterA;
+ var letterE;
+ var letterI;
+ var letterO;
+ var letterU;
 
 function init() {
 
@@ -10,31 +15,149 @@ function init() {
 
   renderer = new THREE.WebGLRenderer();
 
-  renderer.setClearColor(new THREE.Color(1.0, 1.0, 1.0));
-  renderer.setSize(500, 500);
+  renderer.setClearColor(new THREE.Color(0.8, 0.8, 0.8));
+  renderer.setSize(600, 600);
   
   camera = new THREE.OrthographicCamera( -1.0, 1.0, 1.0, -1.0, -1.0, 1.0 );
   scene.add( camera );
-}
+
+  //-------------------------------- Ajustando as letras no plano ---------------------------------
+  var scaleValue  = 0.22;
+  var YValue = 0;
+
+  letterA = drawLetterA();
+  letterA.scale.set(scaleValue,scaleValue,scaleValue);
+  letterA.position.setX(-0.7);
+  letterA.position.setY(0.0);
+  rotateShapeOnAxis(0,-20,letterA);
+
+  letterE = drawLetterE();
+  letterE.scale.set(scaleValue,scaleValue,scaleValue);
+  letterE.position.setX(-0.31);
+  letterE.position.setY(0.0);
+  rotateShapeOnAxis(0,-20,letterE);
 
 
-function addGeometry(geometry) {
-  var line = new THREE.Line(geometry);
-  scene.add(line);  
+  letterI = drawLetterI();
+  letterI.scale.set(scaleValue,scaleValue,scaleValue);
+  letterI.position.setX(-0.05);
+  letterI.position.setY(YValue);
+  rotateShapeOnAxis(0,-20,letterI);
+
+
+  letterO = drawLetterO();
+  letterO.scale.set(scaleValue,scaleValue,scaleValue);
+  letterO.position.set(0.25, YValue, 0);
+  rotateShapeOnAxis(0,-20,letterO);
+
+
+  letterU = drawLetterU();
+  letterU.scale.set(scaleValue,scaleValue,scaleValue);
+  letterU.position.setX(0.7);
+  letterU.position.setY(YValue);
+  rotateShapeOnAxis(0,-20,letterU);
+
+
+
+  var floor = drawFloor();
+
+  groupLetters = new THREE.Object3D();
+  groupLetters.add(letterA);
+  groupLetters.add(letterE);
+  groupLetters.add(letterI);
+  groupLetters.add(letterO);
+  groupLetters.add(letterU);
+
+  groupLetters.scale.set(0.8,0.8,0.8);
+
+  groupScene = new THREE.Object3D();
+  groupScene.add(groupLetters);
+  groupScene.add(floor);
+  scene.add(groupScene);
+
+  //rotation in 20 degrees
+  groupLetters.rotateOnAxis(new THREE.Vector3(1.0, 1.0, 0.0).normalize(), Math.PI/30);
+
+  //-------------------------------- Adicionando as animações ---------------------------------
+  animatedA();
+  animatedE();
+  animatedI();
+
 
   document.getElementById("WebGL-output").appendChild(renderer.domElement);
-
   renderer.clear();
   renderer.render(scene, camera);
+
+
+
+
+}
+
+//------------------------------- Animações  ------------------------------- 
+//
+
+function animatedA() {
+  var currentAngle = 0;
+  var speed = 0.015;
+    function animate() {
+      currentAngle += speed;
+      //Se o angulo for maior que 45 ou menor que -45, muda de lado
+      if (currentAngle >= Math.PI/12 || currentAngle <= -Math.PI/12) {
+          speed *=-1;
+      }
+
+      letterA.rotateOnAxis(new THREE.Vector3(0.0, 0.0, 1.0).normalize(), speed);
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
+function animatedE() {
+  var currentAngle = 0;
+  var speed = 0.015;
+
+    function animate() {
+
+      currentAngle += speed;
+      //Se o angulo for maior que 45 ou menor que -45, muda de lado
+      if (currentAngle >= Math.PI/6 || currentAngle <= -Math.PI/6) {
+          speed *=-1;
+      }
+
+      letterE.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0).normalize(), speed);
+      requestAnimationFrame(animate);
+     
+    }
+
+    animate();
+}
+
+function animatedI() {
+  var currentAngle = 0;
+  var speed = 0.01;
+
+    function animate() {
+
+      currentAngle += speed;
+      //Se o angulo for maior que 45 ou menor que -45, muda de lado
+      if (currentAngle >= Math.PI/6 || currentAngle <= -Math.PI/6) {
+          speed *=-1;
+      }
+      // helper = new THREE.AxisHelper( 1 );
+      // letterI.add(helper);
+      letterI.rotateOnAxis(new THREE.Vector3(1.0, 1.0, 0.0).normalize(), speed);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+     
+    }
+
+    animate();
 }
 
 
-function addShape(shape) {
-   scene.add( currentShape );      
-   document.getElementById("WebGL-output").appendChild(renderer.domElement);
-   renderer.clear();
-   renderer.render(scene, camera);
-}
+ 
+//------------------------------- Aux Functions ------------------------------- 
 
 function clearScene() {
   var obj, i;
@@ -50,12 +173,44 @@ function rotateShapeOnAxis(degreesX,degreesY, shape) {
   var rotationX = new THREE.Vector3( 1, 0, 0 ).normalize();
   var rotationY = new THREE.Vector3( 0, 1, 0 ).normalize();
 
-  currentShape.rotateOnAxis( rotationX, (Math.PI * degreesX)/180 ); 
-  currentShape.rotateOnAxis( rotationY, (Math.PI * degreesY)/180 ); 
+  shape.rotateOnAxis( rotationX, (Math.PI * degreesX)/180 ); 
+  shape.rotateOnAxis( rotationY, (Math.PI * degreesY)/180 ); 
+}
+
+
+
+
+//------------------------------- Desenhando as letras e o chão ------------------------------- 
+
+function drawFloor() {
+  var floorY = -0.2;
+  var vertice = 0.9;
+  var geometry = new THREE.Geometry();
+
+  geometry.vertices.push(new THREE.Vector3( -vertice, floorY, vertice )); //0
+  geometry.vertices.push(new THREE.Vector3( vertice, floorY, vertice )); //1
+  geometry.vertices.push(new THREE.Vector3( -vertice, floorY, -vertice )); //2
+  geometry.vertices.push(new THREE.Vector3( vertice, floorY, -vertice )); //3
+
+
+  geometry.faces.push(new THREE.Face3(0, 2, 1)); //0
+  geometry.faces.push(new THREE.Face3(3, 1, 2)); //1
+
+  var triangleMaterial = new THREE.MeshBasicMaterial({ 
+  color:0xaa7070, 
+  vertexColors:THREE.VertexColors,
+  side:THREE.DoubleSide,
+  wireframe:false
+  });
+
+  var currentShape = new THREE.Mesh(geometry,triangleMaterial);
+  rotateShapeOnAxis(30,5,currentShape);
+
+  return currentShape;
 }
 
 function drawLetterA() {
-  clearScene();
+  //clearScene();
 
   var geometry = new THREE.Geometry();
 
@@ -155,11 +310,13 @@ function drawLetterA() {
   wireframe:false
   }); 
 
-  currentShape = new THREE.Mesh(geometry,triangleMaterial);
+  var currentShape = new THREE.Mesh(geometry,triangleMaterial);
 
   rotateShapeOnAxis(20,20,currentShape);
 
-  addShape(currentShape);
+  
+  return currentShape;
+ 
 
 
  }
@@ -167,7 +324,7 @@ function drawLetterA() {
 
 
 function drawLetterE() {
-  clearScene();
+  //clearScene();
 
   var geometry = new THREE.Geometry();
   
@@ -262,16 +419,17 @@ function drawLetterE() {
 
    //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x0080ff, 
+  color:0xffff00, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
   }); 
-  currentShape = new THREE.Mesh(geometry,triangleMaterial);
+
+  var currentShape = new THREE.Mesh(geometry,triangleMaterial);
 
   rotateShapeOnAxis(20,20,currentShape);
 
-  addShape(currentShape);
+  return currentShape;
 }
 
 
@@ -319,17 +477,17 @@ function drawLetterI()  {
 
    //Adding Element
   var triangleMaterial = new THREE.MeshBasicMaterial({ 
-  color:0x0080ff, 
+  color:0xff00ff, 
   vertexColors:THREE.VertexColors,
   side:THREE.DoubleSide,
   wireframe:false
   }); 
-  currentShape = new THREE.Mesh(geometry,triangleMaterial);
+
+  var currentShape = new THREE.Mesh(geometry,triangleMaterial);
 
   rotateShapeOnAxis(20,20,currentShape);
 
-  addShape(currentShape);
-
+  return currentShape;
 
 }
 
@@ -420,10 +578,10 @@ function drawLetterO() {
   }); 
 
 
-  currentShape = new THREE.Mesh(geometry,triangleMaterial);
+  var currentShape = new THREE.Mesh(geometry,triangleMaterial);
   rotateShapeOnAxis(20,20,currentShape);
 
-  addShape(currentShape);  
+  return currentShape;
 }
 
 
@@ -565,10 +723,10 @@ function drawLetterO() {
   }); 
 
 
-  currentShape = new THREE.Mesh(geometry,triangleMaterial);
+  var currentShape = new THREE.Mesh(geometry,triangleMaterial);
   rotateShapeOnAxis(20,20,currentShape);
 
-  addShape(currentShape);  
+  return currentShape; 
   }
 
   //Binding letters
